@@ -1,0 +1,1479 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>몽분쌤 메이커의 첫 인상 진단</title>
+  <style>
+    @font-face {
+      font-family: "Pinkfong Baby Shark";
+      src: url("public/fonts/Pinkfong Baby Shark Font_ Regular.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #95bee3;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .app-frame {
+      --bob-distance: min(0.520833vw, 0.925926vh);
+
+      position: relative;
+      width: min(100vw, 177.7778vh);
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .start-screen {
+      background: url("public/assets/start.svg") center / 100% 100% no-repeat;
+    }
+
+    .test-screen {
+      background: url("public/assets/test_bg.svg") center / 100% 100% no-repeat;
+    }
+
+    .loading-screen {
+      background: url("public/assets/loading_bg.webp") center / 100% 100% no-repeat;
+    }
+
+    .result-screen {
+      background: url("public/assets/result_bg.webp") center / 100% 100% no-repeat;
+    }
+
+    .result-screen:focus {
+      outline: none;
+    }
+
+    .result-heading {
+      z-index: 3;
+      left: 34.84375%;
+      top: 2.685185%;
+      width: 29.0625%;
+      height: 14.890741%;
+      transform-origin: 50% 50%;
+      will-change: opacity, transform;
+    }
+
+    .result-panel {
+      z-index: 1;
+      left: 3.3854%;
+      top: 18.9815%;
+      width: 95%;
+      height: 65.0926%;
+    }
+
+    .result-content {
+      z-index: 2;
+      will-change: opacity, transform;
+    }
+
+    .result-screen.is-revealing .result-heading {
+      animation: result-title-pop 480ms cubic-bezier(0.22, 1, 0.36, 1) 0ms both;
+    }
+
+    .result-screen.is-revealing .result-type-title {
+      animation: result-float-in 560ms cubic-bezier(0.22, 1, 0.36, 1) 500ms both;
+    }
+
+    .result-screen.is-revealing .result-hashtags {
+      animation: result-float-in 560ms cubic-bezier(0.22, 1, 0.36, 1) 860ms both;
+    }
+
+    .result-screen.is-revealing .result-description {
+      animation: result-float-in 560ms cubic-bezier(0.22, 1, 0.36, 1) 1040ms both;
+    }
+
+    .result-screen.is-revealing .result-advice {
+      animation: result-float-in 560ms cubic-bezier(0.22, 1, 0.36, 1) 1220ms both;
+    }
+
+    .first-button {
+      z-index: 5;
+      left: 39.583333%;
+      top: 86.574074%;
+      width: 20.833333%;
+      height: 10.370370%;
+      min-width: 48px;
+      min-height: 48px;
+      border-radius: 999px;
+    }
+
+    .first-button.is-emphasized img {
+      animation: first-button-emphasis 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .loading-screen:focus {
+      outline: none;
+    }
+
+    .loading-title {
+      z-index: 4;
+      left: 14.531250%;
+      top: 12.037037%;
+      width: 67.187500%;
+      height: 38.611111%;
+      animation: loading-float 3.2s ease-in-out 0s infinite;
+    }
+
+    .loading-subtitle {
+      z-index: 4;
+      left: 21.875000%;
+      top: 48.981481%;
+      width: 56.302083%;
+      height: 8.611111%;
+      animation: loading-float 3.8s ease-in-out -0.8s infinite;
+    }
+
+    .loading-stage-one-heart {
+      left: 4.114583%;
+      top: -13.148148%;
+      width: 9.531250%;
+      height: 59.259259%;
+    }
+
+    .loading-copy {
+      position: absolute;
+      z-index: 7;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .loading-copy-image {
+      position: absolute;
+      inset: -10% 0;
+      display: block;
+      width: 100%;
+      height: 120%;
+    }
+
+    .loading-heart {
+      z-index: 6;
+      transform-origin: 50% 50%;
+      animation: loading-heart-rise var(--loading-stage-duration) ease-out both;
+      will-change: opacity, transform;
+    }
+
+    .loading-heart-right {
+      animation-name: loading-heart-rise-right;
+    }
+
+    .test-screen:focus {
+      outline: none;
+    }
+
+    .asset {
+      position: absolute;
+      display: block;
+      max-width: none;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .subtitle {
+      z-index: 4;
+      left: 33.385416666666664%;
+      top: 13.703703703703704%;
+      width: 34.89583333333333%;
+      height: 8.703703703703704%;
+    }
+
+    .main-title {
+      z-index: 4;
+      left: 25.364583%;
+      top: 26.759259%;
+      width: 50%;
+      height: 39.351852%;
+    }
+
+    .start-button {
+      position: absolute;
+      z-index: 5;
+      left: 34.21875%;
+      top: 71.018519%;
+      width: 30%;
+      height: 16.759259%;
+      min-width: 48px;
+      min-height: 48px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .start-button img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transition: filter 120ms ease, transform 120ms ease;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .start-button:hover img,
+    .start-button:focus-visible img {
+      filter: brightness(1.06) drop-shadow(0 0 14px rgb(255 255 255 / 80%));
+      transform: translateY(-1.5%);
+    }
+
+    .start-button:focus-visible {
+      outline: 5px solid #fff7ac;
+      outline-offset: 7px;
+    }
+
+    .start-button:active img,
+    .start-button.is-clicked img {
+      filter: brightness(1.12) saturate(1.08) drop-shadow(0 0 20px rgb(255 255 255 / 95%));
+      transform: translateY(3%) scale(0.97);
+    }
+
+    /* The exported SVGs are clipped at the top edge of the reference frame. */
+    .start-decoration {
+      z-index: 2;
+      animation: start-carousel var(--carousel-duration) ease-in-out infinite;
+      will-change: transform;
+    }
+
+    .start-heart1 {
+      left: 1.354167%;
+      top: 0%;
+      width: 4.947917%;
+      height: 42.962963%;
+      --carousel-duration: 4.8s;
+    }
+
+    .start-heart2 {
+      left: 18.28125%;
+      top: 0%;
+      width: 7.34375%;
+      height: 45.555556%;
+      --carousel-duration: 5.6s;
+    }
+
+    .start-heart3 {
+      left: 76.302083%;
+      top: 0%;
+      width: 7.34375%;
+      height: 53.611111%;
+      --carousel-duration: 5.1s;
+    }
+
+    .start-heart4 {
+      left: 91.614583%;
+      top: 0%;
+      width: 4.947917%;
+      height: 39.907407%;
+      --carousel-duration: 6.2s;
+    }
+
+    .start-cloud1 {
+      left: 1.145833%;
+      top: 0%;
+      width: 19.6875%;
+      height: 32.222222%;
+      --carousel-duration: 6.8s;
+    }
+
+    .start-cloud2 {
+      left: 83.697917%;
+      top: -24.537037%;
+      width: 13.59375%;
+      height: 38.611111%;
+      --carousel-duration: 7.4s;
+    }
+
+    .start-cloud3 {
+      left: 92.604167%;
+      top: 0%;
+      width: 7.395833%;
+      height: 27.037037%;
+      --carousel-duration: 6.4s;
+    }
+
+    @keyframes start-carousel {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(calc(var(--bob-distance) * -2.4)); }
+    }
+
+    .image-button,
+    .option {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .image-button {
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .image-button img,
+    .option img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .image-button img {
+      position: relative;
+      z-index: 1;
+    }
+
+    .image-button::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      border-radius: inherit;
+      background: #4a4a4a;
+      opacity: 0;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      transition: opacity 160ms ease;
+    }
+
+    .image-button.is-pressed::after {
+      opacity: 0.42;
+    }
+
+    .image-button:focus-visible,
+    .option:focus-visible {
+      outline: max(3px, 0.2604vw) solid #fff7ac;
+      outline-offset: max(3px, 0.3646vw);
+    }
+
+    .before-button {
+      z-index: 8;
+      left: 1.4583%;
+      top: 3.1481%;
+      width: 9.7396%;
+      height: 6.4815%;
+      border-radius: 999px;
+    }
+
+    .progress-bar {
+      z-index: 3;
+      left: 34.6875%;
+      top: 3.3333%;
+      width: 34.8438%;
+      height: 6.4815%;
+    }
+
+    .progress-bar-image {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .progress-extension {
+      position: absolute;
+      z-index: 2;
+      left: 23.3184%;
+      top: 27.1429%;
+      height: 41.4286%;
+      border-radius: 999px;
+      background: #ef8079;
+    }
+
+    .progress-number-mask {
+      position: absolute;
+      z-index: 3;
+      left: 3.737%;
+      top: 12.8571%;
+      width: 6.278%;
+      height: 74.2857%;
+      background: #fff;
+    }
+
+    .progress-number-text {
+      position: absolute;
+      z-index: 4;
+      left: 4.0359%;
+      top: 0;
+      width: 5.5306%;
+      color: #ee7a76;
+      font-family: "Pinkfong Baby Shark", "Arial Rounded MT Bold", sans-serif;
+      font-size: min(2.8646vw, 5.0926vh);
+      font-weight: 400;
+      line-height: 1;
+      text-align: center;
+      text-shadow: 0 min(0.2083vw, 0.3704vh) min(0.2083vw, 0.3704vh) rgb(0 0 0 / 25%);
+    }
+
+    .question-heart {
+      z-index: 2;
+      left: 27.3438%;
+      top: 0;
+      width: 7.1875%;
+      height: 16.3889%;
+      filter: drop-shadow(min(0.4167vw, 0.7407vh) min(0.8333vw, 1.4815vh) min(0.4167vw, 0.7407vh) rgb(45 105 156 / 42%));
+    }
+
+    .question-number {
+      z-index: 4;
+      left: 28.6198%;
+      top: 4.5833%;
+      width: 3.4375%;
+      height: auto;
+      aspect-ratio: 66 / 51;
+      object-fit: contain;
+    }
+
+    .question-number-text {
+      z-index: 4;
+      left: 28.3854%;
+      top: 4.6296%;
+      width: 3.1771%;
+      height: 4.2593%;
+      color: #fff;
+      font-family: "Arial Rounded MT Bold", "Arial Black", sans-serif;
+      font-size: min(2.2917vw, 4.0741vh);
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+      text-shadow: 0 min(0.2083vw, 0.3704vh) min(0.2083vw, 0.3704vh) rgb(0 0 0 / 25%);
+    }
+
+    .question-title {
+      z-index: 3;
+      left: 30.7292%;
+      top: 11.7593%;
+      width: 40.2083%;
+      height: 18.1481%;
+      filter: drop-shadow(0 min(0.2083vw, 0.3704vh) min(0.2083vw, 0.3704vh) rgb(0 0 0 / 25%));
+    }
+
+    .option {
+      z-index: 5;
+      top: 32.7778%;
+      width: 31.7188%;
+      height: 46.0185%;
+      border-radius: 6.5%;
+      isolation: isolate;
+    }
+
+    .option-1 {
+      left: 1.6146%;
+    }
+
+    .option-2 {
+      left: 34.3229%;
+    }
+
+    .option-3 {
+      left: 67.0313%;
+    }
+
+    .option .card {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      transition: filter 120ms ease, transform 120ms ease;
+    }
+
+    .option .answer {
+      position: absolute;
+      z-index: 2;
+      max-width: none;
+    }
+
+    .option .answer-heart,
+    .option .answer-number {
+      position: absolute;
+      display: block;
+      max-width: none;
+      pointer-events: none;
+    }
+
+    .option .answer-heart {
+      z-index: 6;
+      top: 0.4024%;
+      width: 16.6782%;
+      height: 16.4447%;
+    }
+
+    .option .answer-number {
+      z-index: 7;
+      top: 3.6217%;
+      height: 10.0604%;
+    }
+
+    .option-1 .answer-heart {
+      left: 41.3793%;
+    }
+
+    .option-1 .answer-number {
+      left: 47.2906%;
+      width: 4.7619%;
+    }
+
+    .option-2 .answer-heart {
+      left: 43.6782%;
+    }
+
+    .option-2 .answer-number {
+      left: 49.0969%;
+      width: 5.5829%;
+    }
+
+    .option-3 .answer-heart {
+      left: 42.3645%;
+    }
+
+    .option-3 .answer-number {
+      left: 48.1117%;
+      width: 5.5829%;
+    }
+
+    .option:hover .card,
+    .option:focus-visible .card {
+      filter: brightness(1.03) drop-shadow(0 0 min(0.5208vw, 0.9259vh) rgb(255 255 255 / 75%));
+    }
+
+    .option:active .card {
+      transform: scale(0.985);
+    }
+
+    .option[aria-checked="true"]::before {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      left: 0.4105%;
+      top: 4.8454%;
+      width: 99.179%;
+      height: 94.6392%;
+      border-radius: 7.9%;
+      background: #fec0b9;
+    }
+
+    .option[aria-checked="true"] .card {
+      mix-blend-mode: multiply;
+    }
+
+    .option::after {
+      content: "";
+      position: absolute;
+      z-index: 5;
+      left: 0.4105%;
+      top: 4.8454%;
+      width: 99.179%;
+      height: 94.6392%;
+      border-radius: 7.9%;
+      background: rgb(218 218 218 / 62%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease;
+    }
+
+    .options.has-selection .option[aria-checked="false"]::after {
+      opacity: 1;
+    }
+
+    .test-screen.is-transitioning .option,
+    .test-screen.is-transitioning .image-button {
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .next-button {
+      z-index: 7;
+      left: 37.6563%;
+      top: 81.4815%;
+      width: 23.9208%;
+      height: 7.8204%;
+      border-radius: 999px;
+    }
+
+    .next-button::after {
+      inset: 3.0928% 0.7915% 3.6536% 0.6356%;
+    }
+
+    .next-button.is-submit {
+      overflow: visible;
+    }
+
+    .next-button.is-submit img {
+      animation: submit-button-glow 1.5s ease-in-out infinite;
+    }
+
+    .image-button img {
+      transition: filter 120ms ease, transform 120ms ease;
+    }
+
+    .image-button:hover img,
+    .image-button:focus-visible img {
+      filter: brightness(1.05) drop-shadow(0 0 min(0.4167vw, 0.7407vh) rgb(255 255 255 / 70%));
+    }
+
+    .image-button:active img {
+      transform: scale(0.97);
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes result-float-in {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, min(2.6042vw, 4.6296vh), 0);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes result-title-pop {
+      0% {
+        opacity: 0;
+        transform: scale(0.92);
+      }
+
+      58% {
+        opacity: 1;
+        transform: scale(1.035);
+      }
+
+      80% {
+        transform: scale(0.99);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes first-button-emphasis {
+      0% {
+        filter: brightness(1);
+        transform: scale(1);
+      }
+
+      38% {
+        filter: brightness(0.96);
+        transform: scale(0.94);
+      }
+
+      72% {
+        filter: brightness(1.14) drop-shadow(0 0 min(0.625vw, 1.1111vh) rgb(255 255 255 / 92%));
+        transform: scale(1.055);
+      }
+
+      100% {
+        filter: brightness(1.06) drop-shadow(0 0 min(0.4167vw, 0.7407vh) rgb(255 255 255 / 72%));
+        transform: scale(1);
+      }
+    }
+
+    @keyframes loading-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(calc(var(--bob-distance) * -0.85)); }
+    }
+
+    @keyframes loading-heart-rise {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
+      72% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(calc(0px - min(2.5vw, 4.4444vh)), calc(0px - min(4.1667vw, 7.4074vh)), 0) scale(0.28);
+      }
+    }
+
+    @keyframes loading-heart-rise-right {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
+      72% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(min(2.1875vw, 3.8889vh), calc(0px - min(3.75vw, 6.6667vh)), 0) scale(0.28);
+      }
+    }
+
+    @keyframes submit-button-glow {
+      0%,
+      100% {
+        filter:
+          brightness(1.02)
+          drop-shadow(0 0 min(0.3125vw, 0.5556vh) rgb(255 255 255 / 70%))
+          drop-shadow(0 0 min(0.625vw, 1.1111vh) rgb(254 192 185 / 55%));
+      }
+
+      50% {
+        filter:
+          brightness(1.09)
+          drop-shadow(0 0 min(0.5208vw, 0.9259vh) rgb(255 255 255 / 92%))
+          drop-shadow(0 0 min(1.0417vw, 1.8519vh) rgb(239 128 121 / 82%));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .start-button img {
+        transition: none;
+      }
+
+      .start-decoration,
+      .main-title,
+      .subtitle,
+      .loading-title,
+      .loading-subtitle,
+      .loading-heart,
+      .option .card,
+      .image-button img {
+        animation: none;
+        transition: none;
+      }
+
+      .result-screen.is-revealing .result-content,
+      .result-screen.is-revealing .result-heading,
+      .first-button.is-emphasized img {
+        animation: none;
+        transition: none;
+      }
+
+      .first-button.is-emphasized img {
+        filter: brightness(1.12) drop-shadow(0 0 min(0.4167vw, 0.7407vh) rgb(255 255 255 / 72%));
+      }
+
+      .next-button.is-submit img {
+        filter:
+          brightness(1.05)
+          drop-shadow(0 0 min(0.4167vw, 0.7407vh) rgb(255 255 255 / 82%))
+          drop-shadow(0 0 min(0.7292vw, 1.2963vh) rgb(239 128 121 / 62%));
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-frame">
+    <section class="screen start-screen" aria-label="에듀테크 활용 성향 진단 시작 화면">
+      <img class="asset subtitle" src="public/assets/subtitle.svg" alt="나의 에듀테크 연애 유형은?">
+      <img class="asset main-title" src="public/assets/maintitle.svg?v=startscreen-2" alt="썸메이커의 첫 인상 진단">
+
+      <button class="start-button" type="button" aria-label="진단 시작하기">
+        <img src="public/assets/button_start.svg" alt="">
+      </button>
+
+      <img class="asset start-decoration start-heart1" src="public/assets/start_heart1.svg" alt="" aria-hidden="true">
+      <img class="asset start-decoration start-heart2" src="public/assets/start_heart2.svg" alt="" aria-hidden="true">
+      <img class="asset start-decoration start-heart3" src="public/assets/start_heart3.svg" alt="" aria-hidden="true">
+      <img class="asset start-decoration start-heart4" src="public/assets/start_heart4.svg" alt="" aria-hidden="true">
+      <img class="asset start-decoration start-cloud1" src="public/assets/start_cloud1.svg" alt="" aria-hidden="true">
+      <img class="asset start-decoration start-cloud2" src="public/assets/start_cloud2.svg" alt="" aria-hidden="true">
+      <img class="asset start-decoration start-cloud3" src="public/assets/start_cloud3.svg" alt="" aria-hidden="true">
+    </section>
+
+    <section class="screen test-screen" aria-label="에듀테크 활용 성향 진단 첫 번째 질문" tabindex="-1" hidden>
+      <button class="image-button before-button" type="button" aria-label="시작 화면으로 돌아가기">
+        <img src="public/assets/button_before.svg" alt="">
+      </button>
+
+      <img class="asset question-heart" src="public/assets/line_heart_q.svg?v=shadow-fix" alt="">
+      <img class="asset question-number" src="public/assets/number-1.svg?v=reference-position" alt="첫 번째 질문">
+      <span class="asset question-number-text" hidden>Q2</span>
+      <div class="asset progress-bar" role="img" aria-label="진행 상황 1 / 8">
+        <img class="progress-bar-image" src="public/assets/q_bar_1.svg?v=single-shadow" alt="">
+        <span class="progress-extension" hidden></span>
+        <span class="progress-number-mask" hidden></span>
+        <span class="progress-number-text" hidden>2</span>
+      </div>
+      <img class="asset question-title" src="public/assets/q1.svg" alt="새로운 에듀테크 도구를 알게 됐다면?">
+
+      <div class="options" role="radiogroup" aria-label="첫 번째 질문 선택지">
+        <button class="option option-1" type="button" role="radio" aria-checked="false" data-answer="1">
+          <img class="card" src="public/assets/card.svg?v=answer-composition-2" alt="">
+          <img class="answer-heart" src="public/assets/answerheart.svg?v=answer-composition-2" alt="">
+          <img class="answer-number" src="public/assets/answern_1.svg?v=answer-composition-2" alt="">
+          <img class="answer" src="public/assets/q1_a1.svg" alt="오, 괜찮아 보이는데! 일단 링크부터 저장한다.">
+        </button>
+
+        <button class="option option-2" type="button" role="radio" aria-checked="false" data-answer="2">
+          <img class="card" src="public/assets/card.svg?v=answer-composition-2" alt="">
+          <img class="answer-heart" src="public/assets/answerheart.svg?v=answer-composition-2" alt="">
+          <img class="answer-number" src="public/assets/answern_2.svg?v=answer-composition-2" alt="">
+          <img class="answer" src="public/assets/q1_a2.svg" alt="지금 수업에 꼭 필요한지, 믿고 사용할 만한지부터 살펴본다.">
+        </button>
+
+        <button class="option option-3" type="button" role="radio" aria-checked="false" data-answer="3">
+          <img class="card" src="public/assets/card.svg?v=answer-composition-2" alt="">
+          <img class="answer-heart" src="public/assets/answerheart.svg?v=answer-composition-2" alt="">
+          <img class="answer-number" src="public/assets/answern_3.svg?v=answer-composition-2" alt="">
+          <img class="answer" src="public/assets/q1_a3.svg" alt="무료 버전이라도 바로 눌러보며 어떤 도구인지 확인한다.">
+        </button>
+      </div>
+
+      <button class="image-button next-button" type="button" aria-label="다음 질문" aria-disabled="true">
+        <img src="public/assets/botton_next.svg" alt="">
+      </button>
+    </section>
+
+    <section class="screen loading-screen" aria-label="결과를 준비하는 중" aria-busy="true" tabindex="-1" hidden>
+      <img class="asset loading-title" src="public/assets/loading_title.svg" alt="썸메이커의 첫 인상 진단 중!">
+      <img class="asset loading-subtitle" src="public/assets/loading_subtitle.svg" alt="두근두근! 나의 에듀테크 연애 유형을 찾고 있어요">
+
+      <img class="asset loading-stage-one-heart" src="public/assets/start_heart2.svg" alt="">
+
+      <div class="loading-copy" role="img" aria-label="답변 하나씩 모으는 중..."></div>
+      <img class="asset loading-heart loading-heart-left" src="public/assets/loading_heart1.svg" alt="">
+      <img class="asset loading-heart loading-heart-right" src="public/assets/loading_heart2.svg" alt="">
+    </section>
+
+    <section class="screen result-screen" aria-label="에듀테크 활용 성향 진단 결과" tabindex="-1" hidden>
+      <img class="asset result-heading" src="public/assets/result_title.svg" alt="진단 완료!">
+      <img class="asset result-panel" src="public/assets/result_subtitle.svg" alt="나의 에듀테크 연애 유형은?">
+
+      <img class="asset result-content result-type-title" src="public/assets/gm.svg" alt="몰입형">
+      <img class="asset result-content result-hashtags" src="public/assets/gm_h.svg" alt="도전적, 실행 빠름, 호기심 가득">
+      <img class="asset result-content result-description" src="public/assets/gm_s.svg" alt="몰입형 설명">
+      <img class="asset result-content result-advice" src="public/assets/gm_a.svg" alt="몰입형 처방">
+
+      <button class="image-button first-button" type="button" aria-label="처음으로 돌아가기">
+        <img src="public/assets/button_first.svg" alt="">
+      </button>
+    </section>
+
+    <p class="visually-hidden" aria-live="polite" id="screen-message"></p>
+  </main>
+
+  <script>
+    const QUESTIONS = [
+      {
+        title: { src: 'q1.svg', x: 590, y: 127, width: 772, height: 196 },
+        answers: [
+          { src: 'q1_a1.svg', x: 198, y: 464, width: 296, height: 332 },
+          { src: 'q1_a2.svg', x: 701, y: 460.5, width: 521, height: 331 },
+          { src: 'q1_a3.svg', x: 1420, y: 467.5, width: 349, height: 325 }
+        ]
+      },
+      {
+        title: { src: 'q2.svg', x: 503, y: 144, width: 914, height: 210 },
+        answers: [
+          { src: 'q2_a1.svg', x: 125, y: 466.5, width: 415, height: 237 },
+          { src: 'q2_a2.svg', x: 729.5, y: 462, width: 466, height: 328 },
+          { src: 'q2_a3.svg', x: 1399, y: 463.5, width: 390, height: 333 }
+        ]
+      },
+      {
+        title: { src: 'q3.svg', x: 420, y: 144, width: 1080, height: 210 },
+        answers: [
+          { src: 'q3_a1.svg', x: 154, y: 461, width: 368, height: 334 },
+          { src: 'q3_a2.svg', x: 708.5, y: 458, width: 508, height: 332 },
+          { src: 'q3_a3.svg', x: 1343, y: 463.5, width: 495, height: 329 }
+        ]
+      },
+      {
+        title: { src: 'q4.svg', x: 644, y: 144, width: 664, height: 196 },
+        answers: [
+          { src: 'q4_a1.svg', x: 104.5, y: 465, width: 464, height: 330 },
+          { src: 'q4_a2.svg', x: 754.5, y: 465.5, width: 415, height: 329 },
+          { src: 'q4_a3.svg', x: 1374, y: 465, width: 433, height: 330 }
+        ]
+      },
+      {
+        title: { src: 'q5.svg', x: 518, y: 144, width: 885, height: 210 },
+        answers: [
+          { src: 'q5_a1.svg', x: 142.5, y: 463.5, width: 387, height: 333 },
+          { src: 'q5_a2.svg', x: 722.5, y: 461.5, width: 483, height: 337 },
+          { src: 'q5_a3.svg', x: 1401, y: 463, width: 382, height: 334 }
+        ]
+      },
+      {
+        title: { src: 'q6.svg', x: 532, y: 144, width: 856, height: 196 },
+        answers: [
+          { src: 'q6_a1.svg', x: 165.5, y: 466, width: 337, height: 328 },
+          { src: 'q6_a2.svg', x: 798, y: 465.5, width: 333, height: 329 },
+          { src: 'q6_a3.svg', x: 1330.5, y: 466, width: 524, height: 328 }
+        ]
+      },
+      {
+        title: { src: 'q7.svg', x: 410, y: 144, width: 1101, height: 196 },
+        answers: [
+          { src: 'q7_a1.svg', x: 111, y: 468, width: 450, height: 324 },
+          { src: 'q7_a2.svg', x: 730.5, y: 465.5, width: 468, height: 329 },
+          { src: 'q7_a3.svg', x: 1363.5, y: 464, width: 460, height: 332 }
+        ]
+      },
+      {
+        title: { src: 'q8.svg', x: 361, y: 144, width: 1199, height: 196 },
+        answers: [
+          { src: 'q8_a1.svg', x: 125.5, y: 466, width: 425, height: 328 },
+          { src: 'q8_a2.svg', x: 730, y: 467, width: 470, height: 326 },
+          { src: 'q8_a3.svg', x: 1336, y: 466, width: 518, height: 325 }
+        ]
+      }
+    ];
+
+    // 운영자용 채점 데이터이며 참여자 화면에는 표시하지 않는다.
+    const RESULT_TYPE_KEYS = ['gm', 'hs', 'kt', 'stone', 'tt'];
+    const SCORING_TABLE = [
+      ['kt', 'stone', 'hs'],
+      ['gm', 'stone', 'tt'],
+      ['hs', 'kt', 'gm'],
+      ['tt', 'stone', 'kt'],
+      ['stone', 'tt', 'gm'],
+      ['gm', 'kt', 'hs'],
+      ['hs', 'gm', 'stone'],
+      ['kt', 'hs', 'tt']
+    ];
+    const TT_CORRECTION_ANSWERS = [
+      { questionIndex: 3, answer: 1 },
+      { questionIndex: 4, answer: 2 },
+      { questionIndex: 7, answer: 3 }
+    ];
+    const TIE_BREAK_QUESTION_INDICES = [6, 4, 3];
+    const STONE_TT_TIE_BREAK_QUESTION_INDICES = [4, 3];
+
+    const LOADING_STAGES = [
+      {
+        text: '답변 하나씩 모으는 중...',
+        asset: { src: 'loading_1.svg', x: 614, y: 674, width: 638, height: 80 },
+        hearts: [
+          { x: 539, y: 630, width: 72, height: 68 },
+          { x: 1292, y: 659, width: 55, height: 52 }
+        ]
+      },
+      {
+        text: '두근두근 케미를 계산하는 중...',
+        asset: { src: 'loading_2.svg', x: 564, y: 674, width: 792, height: 80 },
+        hearts: [
+          { x: 460, y: 630, width: 72, height: 68 },
+          { x: 1365, y: 659, width: 55, height: 52 }
+        ]
+      },
+      {
+        text: '당신만의 결과 카드를 만드는 중...',
+        asset: { src: 'loading_3.svg', x: 516, y: 674, width: 889, height: 80 },
+        hearts: [
+          { x: 539, y: 630, width: 72, height: 68 },
+          { x: 1292, y: 659, width: 55, height: 52 }
+        ]
+      }
+    ];
+
+    const RESULT_TYPES = {
+      gm: {
+        name: '몰입형',
+        title: { src: 'gm.svg', x: 178, y: 440, width: 576, height: 311 },
+        hashtags: { src: 'gm_h.svg', x: 921, y: 318, width: 901, height: 83, alt: '도전적, 실행 빠름, 호기심 가득' },
+        description: { src: 'gm_s.svg', x: 974, y: 419, width: 796, height: 140 },
+        advice: { src: 'gm_a.svg', x: 905, y: 584, width: 946, height: 234 }
+      },
+      hs: {
+        name: '환승형',
+        title: { src: 'hs.svg', x: 173, y: 447, width: 630, height: 305 },
+        hashtags: { src: 'hs_h.svg', x: 921, y: 318, width: 901, height: 83, alt: '효율 추구, 유연함, 새로움 탐색' },
+        description: { src: 'hs_s.svg', x: 915, y: 419, width: 926, height: 134 },
+        advice: { src: 'hs_a.svg', x: 905, y: 584, width: 946, height: 234 }
+      },
+      kt: {
+        name: '눈팅형',
+        title: { src: 'kt.svg', x: 199, y: 440, width: 552, height: 343 },
+        hashtags: { src: 'kt_h.svg', x: 921, y: 318, width: 901, height: 83, alt: '관찰형, 정보 탐색, 조심스러움' },
+        description: { src: 'kt_s.svg', x: 948, y: 419, width: 861, height: 144 },
+        advice: { src: 'kt_a.svg', x: 905, y: 584, width: 946, height: 234 }
+      },
+      stone: {
+        name: '철벽형',
+        title: { src: 'stone.svg', x: 170, y: 440, width: 594, height: 345 },
+        hashtags: { src: 'stone_h.svg', x: 921, y: 318, width: 901, height: 83, alt: '신중함, 검증 우선, 안전 중시' },
+        description: { src: 'stone_s.svg', x: 951, y: 419, width: 855, height: 140 },
+        advice: { src: 'stone_a.svg', x: 905, y: 584, width: 946, height: 234 }
+      },
+      tt: {
+        name: '뚝딱형',
+        title: { src: 'tt.svg', x: 187, y: 447, width: 563, height: 343 },
+        hashtags: { src: 'tt_h.svg', x: 921, y: 318, width: 901, height: 83, alt: '실용적, 빠른 판단, 문제 해결형' },
+        description: { src: 'tt_s.svg', x: 961, y: 436, width: 835, height: 109 },
+        advice: { src: 'tt_a.svg', x: 905, y: 584, width: 946, height: 234 }
+      }
+    };
+
+    const startScreen = document.querySelector('.start-screen');
+    const testScreen = document.querySelector('.test-screen');
+    const loadingScreen = document.querySelector('.loading-screen');
+    const resultScreen = document.querySelector('.result-screen');
+    const startButton = document.querySelector('.start-button');
+    const beforeButton = document.querySelector('.before-button');
+    const nextButton = document.querySelector('.next-button');
+    const nextButtonImage = nextButton.querySelector('img');
+    const firstButton = document.querySelector('.first-button');
+    const optionsContainer = document.querySelector('.options');
+    const options = [...document.querySelectorAll('.option')];
+    const answerImages = [...document.querySelectorAll('.option .answer')];
+    const questionTitle = document.querySelector('.question-title');
+    const questionNumberImage = document.querySelector('.question-number');
+    const questionNumberText = document.querySelector('.question-number-text');
+    const progressBar = document.querySelector('.progress-bar');
+    const progressExtension = document.querySelector('.progress-extension');
+    const progressNumberMask = document.querySelector('.progress-number-mask');
+    const progressNumberText = document.querySelector('.progress-number-text');
+    const loadingCopy = document.querySelector('.loading-copy');
+    const loadingStageOneHeart = document.querySelector('.loading-stage-one-heart');
+    const loadingHearts = [...document.querySelectorAll('.loading-heart')];
+    const resultTypeTitle = document.querySelector('.result-type-title');
+    const resultHashtags = document.querySelector('.result-hashtags');
+    const resultDescription = document.querySelector('.result-description');
+    const resultAdvice = document.querySelector('.result-advice');
+    const screenMessage = document.querySelector('#screen-message');
+    const responses = Array(QUESTIONS.length).fill(null);
+    const AUTO_ADVANCE_DELAY = 520;
+    const BUTTON_FEEDBACK_DELAY = 260;
+    const FIRST_BUTTON_FEEDBACK_DELAY = 420;
+    const LOADING_STAGE_DURATION = 1600;
+    loadingScreen.style.setProperty('--loading-stage-duration', `${LOADING_STAGE_DURATION}ms`);
+    let currentQuestionIndex = 0;
+    let transitionTimer = null;
+    let loadingTimer = null;
+    let isTransitioning = false;
+
+    function applyAssetPosition(element, asset) {
+      element.style.left = `${(asset.x / 1920) * 100}%`;
+      element.style.top = `${(asset.y / 1080) * 100}%`;
+      element.style.width = `${(asset.width / 1920) * 100}%`;
+      element.style.height = `${(asset.height / 1080) * 100}%`;
+    }
+
+    function applyAnswerPosition(element, asset, optionIndex) {
+      const optionX = [31, 659, 1287][optionIndex];
+      element.style.left = `${((asset.x - optionX) / 609) * 100}%`;
+      element.style.top = `${((asset.y - 354) / 497) * 100}%`;
+      element.style.width = `${(asset.width / 609) * 100}%`;
+      element.style.height = `${(asset.height / 497) * 100}%`;
+    }
+
+    function calculateResult(answerValues) {
+      const isComplete = Array.isArray(answerValues)
+        && answerValues.length === SCORING_TABLE.length
+        && answerValues.every((answer) => Number.isInteger(answer) && answer >= 1 && answer <= 3);
+
+      if (!isComplete) {
+        return null;
+      }
+
+      const scores = Object.fromEntries(RESULT_TYPE_KEYS.map((typeKey) => [typeKey, 0]));
+      answerValues.forEach((answer, questionIndex) => {
+        const typeKey = SCORING_TABLE[questionIndex][answer - 1];
+        scores[typeKey] += 1;
+      });
+
+      const highestScore = Math.max(...Object.values(scores));
+      const ttCorrectionCount = TT_CORRECTION_ANSWERS.filter(
+        ({ questionIndex, answer }) => answerValues[questionIndex] === answer
+      ).length;
+
+      if (ttCorrectionCount >= 2 && scores.tt === highestScore - 1) {
+        return 'tt';
+      }
+
+      const tiedTypes = RESULT_TYPE_KEYS.filter((typeKey) => scores[typeKey] === highestScore);
+      if (tiedTypes.length === 1) {
+        return tiedTypes[0];
+      }
+
+      const isStoneTtTie = tiedTypes.length === 2
+        && tiedTypes.includes('stone')
+        && tiedTypes.includes('tt');
+      const tieBreakQuestions = isStoneTtTie
+        ? STONE_TT_TIE_BREAK_QUESTION_INDICES
+        : TIE_BREAK_QUESTION_INDICES;
+
+      for (const questionIndex of tieBreakQuestions) {
+        const selectedType = SCORING_TABLE[questionIndex][answerValues[questionIndex] - 1];
+        if (tiedTypes.includes(selectedType)) {
+          return selectedType;
+        }
+      }
+
+      return null;
+    }
+
+    function setTransitioning(active) {
+      isTransitioning = active;
+      testScreen.classList.toggle('is-transitioning', active);
+
+      if (active) {
+        testScreen.setAttribute('aria-busy', 'true');
+      } else {
+        testScreen.removeAttribute('aria-busy');
+      }
+    }
+
+    function clearTransitionFeedback() {
+      if (transitionTimer !== null) {
+        window.clearTimeout(transitionTimer);
+        transitionTimer = null;
+      }
+
+      setTransitioning(false);
+      beforeButton.classList.remove('is-pressed');
+      nextButton.classList.remove('is-pressed');
+    }
+
+    function runDelayedTransition(delay, callback, button = null) {
+      if (isTransitioning) {
+        return;
+      }
+
+      setTransitioning(true);
+      button?.classList.add('is-pressed');
+      transitionTimer = window.setTimeout(() => {
+        transitionTimer = null;
+        button?.classList.remove('is-pressed');
+        setTransitioning(false);
+        callback();
+      }, delay);
+    }
+
+    function goToNextQuestion() {
+      if (currentQuestionIndex === QUESTIONS.length - 1) {
+        showLoadingScreen();
+        return;
+      }
+
+      renderQuestion(currentQuestionIndex + 1);
+      testScreen.focus();
+    }
+
+    function renderQuestion(index) {
+      clearTransitionFeedback();
+      const question = QUESTIONS[index];
+      const questionNumber = index + 1;
+      currentQuestionIndex = index;
+
+      testScreen.setAttribute('aria-label', `에듀테크 활용 성향 진단 ${questionNumber}번째 질문`);
+      optionsContainer.setAttribute('aria-label', `${questionNumber}번째 질문 선택지`);
+
+      questionTitle.src = `public/assets/${question.title.src}?v=title-shadow-fix`;
+      questionTitle.alt = `${questionNumber}번째 질문`;
+      applyAssetPosition(questionTitle, question.title);
+
+      questionNumberImage.hidden = questionNumber !== 1;
+      questionNumberText.hidden = questionNumber === 1;
+      questionNumberText.textContent = `Q${questionNumber}`;
+
+      progressBar.setAttribute('aria-label', `진행 상황 ${questionNumber} / 8`);
+      const showProgressOverlay = questionNumber > 1;
+      progressExtension.hidden = !showProgressOverlay;
+      progressNumberMask.hidden = !showProgressOverlay;
+      progressNumberText.hidden = !showProgressOverlay;
+      progressNumberText.textContent = String(questionNumber);
+      progressExtension.style.width = `${((67 + ((questionNumber - 1) * 60)) / 669) * 100}%`;
+
+      options.forEach((option, optionIndex) => {
+        const isSelected = responses[index] === optionIndex + 1;
+        option.setAttribute('aria-checked', String(isSelected));
+        answerImages[optionIndex].src = `public/assets/${question.answers[optionIndex].src}?v=q2-q8`;
+        answerImages[optionIndex].alt = `${optionIndex + 1}번 선택지`;
+        applyAnswerPosition(answerImages[optionIndex], question.answers[optionIndex], optionIndex);
+      });
+
+      optionsContainer.classList.toggle('has-selection', responses[index] !== null);
+
+      beforeButton.setAttribute('aria-label', questionNumber === 1 ? '시작 화면으로 돌아가기' : '이전 질문');
+      const isSubmitQuestion = questionNumber === QUESTIONS.length;
+      nextButton.classList.toggle('is-submit', isSubmitQuestion);
+      nextButton.setAttribute('aria-label', isSubmitQuestion ? '제출하기' : '다음 질문');
+      nextButtonImage.src = isSubmitQuestion
+        ? 'public/assets/button_send.svg?v=submit-glow'
+        : 'public/assets/botton_next.svg';
+      nextButton.setAttribute('aria-disabled', String(responses[index] === null));
+    }
+
+    function renderLoadingCopy(stage) {
+      const image = document.createElement('img');
+      image.className = 'loading-copy-image';
+      image.src = `public/assets/${stage.asset.src}`;
+      image.alt = '';
+      loadingCopy.replaceChildren(image);
+      loadingCopy.setAttribute('aria-label', stage.text);
+      applyAssetPosition(loadingCopy, stage.asset);
+    }
+
+    function renderLoadingStage(index) {
+      const stage = LOADING_STAGES[index];
+
+      if (loadingTimer !== null) {
+        window.clearTimeout(loadingTimer);
+        loadingTimer = null;
+      }
+
+      renderLoadingCopy(stage);
+      loadingStageOneHeart.hidden = index !== 0;
+      loadingHearts.forEach((heart, heartIndex) => {
+        heart.style.animation = 'none';
+        applyAssetPosition(heart, stage.hearts[heartIndex]);
+        void heart.offsetWidth;
+        heart.style.animation = '';
+      });
+
+      loadingScreen.setAttribute('aria-label', stage.text);
+      screenMessage.textContent = stage.text;
+
+      if (index < LOADING_STAGES.length - 1) {
+        loadingTimer = window.setTimeout(() => renderLoadingStage(index + 1), LOADING_STAGE_DURATION);
+      } else {
+        loadingTimer = window.setTimeout(finishDiagnosis, LOADING_STAGE_DURATION);
+      }
+    }
+
+    function finishDiagnosis() {
+      const resultTypeKey = calculateResult(responses);
+
+      if (resultTypeKey === null) {
+        showTestScreen();
+        screenMessage.textContent = '모든 질문에 답한 뒤 결과를 확인할 수 있습니다.';
+        return;
+      }
+
+      showResultScreen(resultTypeKey);
+    }
+
+    function renderResult(resultTypeKey) {
+      const result = RESULT_TYPES[resultTypeKey];
+
+      resultTypeTitle.src = `public/assets/${result.title.src}`;
+      resultTypeTitle.alt = result.name;
+      applyAssetPosition(resultTypeTitle, result.title);
+
+      resultHashtags.src = `public/assets/${result.hashtags.src}`;
+      resultHashtags.alt = result.hashtags.alt;
+      applyAssetPosition(resultHashtags, result.hashtags);
+
+      resultDescription.src = `public/assets/${result.description.src}`;
+      resultDescription.alt = `${result.name} 설명`;
+      applyAssetPosition(resultDescription, result.description);
+
+      resultAdvice.src = `public/assets/${result.advice.src}`;
+      resultAdvice.alt = `${result.name} 처방`;
+      applyAssetPosition(resultAdvice, result.advice);
+
+      resultScreen.setAttribute('aria-label', `에듀테크 활용 성향 진단 결과: ${result.name}`);
+      screenMessage.textContent = `진단 결과는 ${result.name}입니다.`;
+    }
+
+    function showResultScreen(resultTypeKey) {
+      if (!Object.hasOwn(RESULT_TYPES, resultTypeKey)) {
+        return;
+      }
+
+      if (loadingTimer !== null) {
+        window.clearTimeout(loadingTimer);
+        loadingTimer = null;
+      }
+
+      startScreen.hidden = true;
+      testScreen.hidden = true;
+      loadingScreen.hidden = true;
+      resultScreen.hidden = false;
+      renderResult(resultTypeKey);
+      resultScreen.classList.remove('is-revealing');
+      void resultScreen.offsetWidth;
+      resultScreen.classList.add('is-revealing');
+      resultScreen.focus();
+    }
+
+    function showLoadingScreen() {
+      clearTransitionFeedback();
+      testScreen.hidden = true;
+      resultScreen.hidden = true;
+      loadingScreen.hidden = false;
+      renderLoadingStage(0);
+      loadingScreen.focus();
+    }
+
+    function showTestScreen() {
+      startScreen.hidden = true;
+      loadingScreen.hidden = true;
+      resultScreen.hidden = true;
+      testScreen.hidden = false;
+      renderQuestion(currentQuestionIndex);
+      testScreen.focus();
+    }
+
+    function showStartScreen() {
+      if (loadingTimer !== null) {
+        window.clearTimeout(loadingTimer);
+        loadingTimer = null;
+      }
+
+      testScreen.hidden = true;
+      loadingScreen.hidden = true;
+      resultScreen.hidden = true;
+      resultScreen.classList.remove('is-revealing');
+      startScreen.hidden = false;
+      responses.fill(null);
+      currentQuestionIndex = 0;
+      renderQuestion(0);
+      startButton.focus();
+    }
+
+    startButton.addEventListener('click', async () => {
+      if (isTransitioning) return;
+      startButton.classList.remove('is-clicked');
+      void startButton.offsetWidth;
+      startButton.classList.add('is-clicked');
+      runDelayedTransition(220, () => {
+        startButton.classList.remove('is-clicked');
+        showTestScreen();
+      });
+
+      if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+        try {
+          await document.documentElement.requestFullscreen();
+        } catch {
+          // 전체 화면이 거부되어도 질문 화면은 계속 사용할 수 있다.
+        }
+      }
+    });
+
+    beforeButton.addEventListener('click', () => {
+      runDelayedTransition(BUTTON_FEEDBACK_DELAY, () => {
+        if (currentQuestionIndex === 0) {
+          showStartScreen();
+          return;
+        }
+
+        renderQuestion(currentQuestionIndex - 1);
+        testScreen.focus();
+      }, beforeButton);
+    });
+
+    options.forEach((option, index) => {
+      option.addEventListener('click', () => {
+        if (isTransitioning) {
+          return;
+        }
+
+        const isRevisingAnswer = responses[currentQuestionIndex] !== null;
+        responses[currentQuestionIndex] = index + 1;
+        options.forEach((item) => item.setAttribute('aria-checked', String(item === option)));
+        optionsContainer.classList.add('has-selection');
+        nextButton.setAttribute('aria-disabled', 'false');
+
+        if (isRevisingAnswer) {
+          screenMessage.textContent = `${currentQuestionIndex + 1}번째 질문의 답변이 ${index + 1}번으로 변경되었습니다. 다음 버튼을 눌러 주세요.`;
+        } else if (currentQuestionIndex < QUESTIONS.length - 1) {
+          screenMessage.textContent = `${currentQuestionIndex + 1}번째 질문의 ${index + 1}번 선택지가 선택되었습니다. 잠시 후 다음 질문으로 이동합니다.`;
+          runDelayedTransition(AUTO_ADVANCE_DELAY, goToNextQuestion);
+        } else {
+          screenMessage.textContent = `${currentQuestionIndex + 1}번째 질문의 ${index + 1}번 선택지가 선택되었습니다. 다음 버튼을 눌러 주세요.`;
+        }
+      });
+
+      option.addEventListener('keydown', (event) => {
+        if (isTransitioning) {
+          event.preventDefault();
+          return;
+        }
+
+        if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+          return;
+        }
+
+        event.preventDefault();
+        const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
+        options[(index + direction + options.length) % options.length].focus();
+      });
+    });
+
+    nextButton.addEventListener('click', () => {
+      if (responses[currentQuestionIndex] === null) {
+        screenMessage.textContent = '선택지를 먼저 선택해 주세요.';
+        return;
+      }
+
+      runDelayedTransition(BUTTON_FEEDBACK_DELAY, goToNextQuestion, nextButton);
+    });
+
+    firstButton.addEventListener('click', () => {
+      if (firstButton.classList.contains('is-emphasized')) {
+        return;
+      }
+
+      firstButton.classList.add('is-emphasized');
+      const feedbackDelay = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 160
+        : FIRST_BUTTON_FEEDBACK_DELAY;
+      window.setTimeout(() => {
+        firstButton.classList.remove('is-emphasized');
+        showStartScreen();
+      }, feedbackDelay);
+    });
+
+    const requestedPreviewResultType = new URLSearchParams(window.location.search).get('result');
+    if (Object.hasOwn(RESULT_TYPES, requestedPreviewResultType)) {
+      showResultScreen(requestedPreviewResultType);
+    }
+  </script>
+</body>
+</html>
